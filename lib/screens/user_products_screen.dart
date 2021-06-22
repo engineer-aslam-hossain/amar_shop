@@ -1,3 +1,4 @@
+import 'package:amar_shop/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:amar_shop/providers/products.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +24,12 @@ class UserProductsScreen extends StatelessWidget {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: ListView.builder(
           itemBuilder: (ctx, indx) => UserProductItem(
+            productsData.items[indx].id,
             productsData.items[indx].title,
             productsData.items[indx].imageUrl,
           ),

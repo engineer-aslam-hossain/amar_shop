@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'product.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -49,8 +51,49 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProduct() {
-    // _items.add(value);
+  Future<void> addProduct(Product product) {
+    const url =
+        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products.json';
+    return http
+        .post(Uri.parse(url),
+            body: json.encode({
+              'title': product.title,
+              'price': product.price,
+              'description': product.description,
+              'imageUrl': product.imageUrl,
+              'isFavorite': product.isFavorite,
+            }))
+        .then(
+      (res) {
+        final newProduct = Product(
+          id: json.decode(res.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+
+        _items.add(newProduct);
+        notifyListeners();
+      },
+    ).catchError((err) {
+      throw err;
+    });
+  }
+
+  void updateProduct(String id, Product newProdcut) {
+    final productIndx = _items.indexWhere((element) => element.id == id);
+
+    if (productIndx >= 0) {
+      _items[productIndx] = newProdcut;
+      notifyListeners();
+    } else {
+      print('....');
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }
