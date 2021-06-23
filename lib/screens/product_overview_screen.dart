@@ -5,11 +5,15 @@ import 'package:amar_shop/widgets/badge.dart';
 import 'package:amar_shop/widgets/products_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:amar_shop/screens/cart_screen.dart';
+import 'package:amar_shop/providers/products.dart';
 
 enum FilterValue {
   Favorites,
   All,
 }
+
+var _isInit = true;
+var _isLoading = false;
 
 class ProductOverviewScreen extends StatefulWidget {
   static const routeName = '/product_preview_screen';
@@ -20,6 +24,31 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _showOnlyFavorites = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // Provider.of<Products>(context).fetchAndSetProducts();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+
+    _isInit = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +95,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showOnlyFavorites),
     );
   }
 }
