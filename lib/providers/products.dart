@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
+  final String authToken;
   List<Product> _items = [];
+
+  Products(this.authToken);
 
   List<Product> get items {
     return [..._items];
@@ -21,12 +24,17 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    const url =
-        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products.json?auth=$authToken';
 
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (extractedData == null) {
+        return;
+      }
+
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -46,8 +54,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url =
-        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products.json?auth=$authToken';
 
     try {
       final response = await http.post(Uri.parse(url),
@@ -79,7 +87,7 @@ class Products with ChangeNotifier {
 
     if (productIndx >= 0) {
       final url =
-          'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json';
+          'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProdcut.title,
@@ -96,7 +104,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json';
+        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
 
     final existingProdIndex = _items.indexWhere((element) => element.id == id);
     var existingProd = _items[existingProdIndex];

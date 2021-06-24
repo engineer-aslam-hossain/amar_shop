@@ -1,3 +1,4 @@
+import 'package:amar_shop/providers/auth.dart';
 import 'package:amar_shop/providers/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -31,7 +33,7 @@ class ProductItem extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               onPressed: () {
-                pro_duct.toggleFavoriteStatus();
+                pro_duct.toggleFavoriteStatus(authData.token);
               },
             ),
           ),

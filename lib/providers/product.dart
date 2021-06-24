@@ -19,12 +19,12 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     final url =
-        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json';
+        'https://amar-shop-efdfb-default-rtdb.firebaseio.com/products/$id.json?auth=$token';
 
     try {
       final response = await http.patch(Uri.parse(url),
