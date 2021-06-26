@@ -5,12 +5,10 @@ import 'package:amar_shop/providers/orders.dart';
 import 'package:provider/provider.dart';
 
 class OrdersScreen extends StatelessWidget {
-  static const routeName = 'orders_screen';
+  static const routeName = '/orders_screen';
 
   @override
   Widget build(BuildContext context) {
-    // final ordersData = Provider.of<Orders>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Orders'),

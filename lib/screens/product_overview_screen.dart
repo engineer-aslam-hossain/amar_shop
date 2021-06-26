@@ -12,12 +12,7 @@ enum FilterValue {
   All,
 }
 
-var _isInit = true;
-var _isLoading = false;
-
 class ProductOverviewScreen extends StatefulWidget {
-  static const routeName = '/product_preview_screen';
-
   @override
   _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
 }
@@ -26,34 +21,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _showOnlyFavorites = false;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // Provider.of<Products>(context).fetchAndSetProducts();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    }
-
-    _isInit = false;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<Cart>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Amar Shop'),
@@ -95,11 +63,25 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: _isLoading
-          ? Center(
+      body: FutureBuilder(
+        future:
+            Provider.of<Products>(context, listen: false).fetchAndSetProducts(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
               child: CircularProgressIndicator(),
-            )
-          : ProductsGrid(_showOnlyFavorites),
+            );
+          } else {
+            if (snapshot.error == null) {
+              return ProductsGrid(_showOnlyFavorites);
+            } else {
+              return Center(
+                child: Text('something went wrong'),
+              );
+            }
+          }
+        },
+      ),
     );
   }
 }
