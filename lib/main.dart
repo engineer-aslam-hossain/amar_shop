@@ -1,3 +1,4 @@
+import 'package:amar_shop/helpers/custom_route.dart';
 import 'package:amar_shop/providers/auth.dart';
 import 'package:amar_shop/screens/auth_screen.dart';
 import 'package:amar_shop/screens/edit_product_screen.dart';
@@ -47,10 +48,13 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Amar Shop',
           theme: ThemeData(
-            primarySwatch: Colors.purple,
-            accentColor: Colors.deepOrange,
-            fontFamily: 'Lato',
-          ),
+              primarySwatch: Colors.purple,
+              accentColor: Colors.deepOrange,
+              fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              })),
           home: auth.isAuth
               ? ProductOverviewScreen()
               : FutureBuilder(
